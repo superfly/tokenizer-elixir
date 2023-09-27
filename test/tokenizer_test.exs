@@ -2,9 +2,15 @@ defmodule TokenizerTest do
   use ExUnit.Case
 
   test "seal" do
-    s = Tokenizer.Secret.new(%Tokenizer.InjectProcessor{token: "foo"}, %Tokenizer.BearerAuth{digest: "bar"})
+    s =
+      Tokenizer.Secret.new(%Tokenizer.InjectProcessor{token: "foo"}, %Tokenizer.BearerAuth{
+        digest: "bar"
+      })
+
     assert {:ok, sealed} = Tokenizer.seal(s, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-    assert byte_size(sealed) == byte_size(Base.encode64(String.duplicate("A", byte_size(Jason.encode!(s)) + 48)))
+
+    assert byte_size(sealed) ==
+             byte_size(Base.encode64(String.duplicate("A", byte_size(Jason.encode!(s)) + 48)))
   end
 
   test "encode" do

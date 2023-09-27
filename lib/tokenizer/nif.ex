@@ -3,7 +3,7 @@ defmodule Tokenizer.Nif do
   @on_load {:init, 0}
 
   def init do
-    path = :filename.join(:code.priv_dir(:tokenizer), 'tokenizer_nif')
+    path = :filename.join(:code.priv_dir(:tokenizer), ~c"tokenizer_nif")
     :erlang.load_nif(path, 0)
   end
 
