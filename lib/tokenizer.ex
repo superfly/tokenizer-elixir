@@ -37,12 +37,11 @@ defmodule Tokenizer do
     defp merge_auth(%Secret{} = s, %MacaroonAuth{} = auth), do: %Secret{s | macaroon_auth: auth}
   end
 
+  @spec seal(%Tokenizer.Secret{}, iodata()) :: {:ok, String.t()}|{:error, any()}
   def seal(%Tokenizer.Secret{} = s, key) do
     with {:ok, json} <- Jason.encode(s),
          {:ok, sealed} <- Tokenizer.Nif.seal(json, key) do
       {:ok, Base.encode64(sealed)}
-    else
-      error -> error
     end
   end
 

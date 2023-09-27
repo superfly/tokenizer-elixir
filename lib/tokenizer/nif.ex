@@ -7,5 +7,6 @@ defmodule Tokenizer.Nif do
     :erlang.load_nif(path, 0)
   end
 
-  def seal(_msg, _seal_key), do: :erlang.exit(:tokernizer_nif_not_loaded)
+  @spec seal(iodata(), iodata()) :: {:ok, iodata()}|{:error, atom()}
+  def seal(_msg, _seal_key), do: :erlang.nif_error(:tokernizer_nif_not_loaded)
 end
