@@ -1,6 +1,19 @@
-#include <sodium.h>
+#include "sodium.h"
 #include <erl_nif.h>
 #include <stdio.h>
+
+static ERL_NIF_TERM tokenizer_init(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    if (argc != 0) {
+        return enif_make_badarg(env);
+    }
+
+    if (sodium_init()) {
+        return enif_make_tuple2(env, enif_make_atom(env, "error"), enif_make_atom(env, "init"));
+    }
+
+    return enif_make_atom(env, "ok");
+}
 
 static ERL_NIF_TERM tokenizer_seal(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
@@ -41,7 +54,8 @@ static ERL_NIF_TERM tokenizer_seal(ErlNifEnv* env, int argc, const ERL_NIF_TERM 
 }
 
 static ErlNifFunc nif_funcs[] = {
-    {"seal", 2, tokenizer_seal}
+    {"init", 0, tokenizer_init, 0},
+    {"seal", 2, tokenizer_seal, 0}
 };
 
 ERL_NIF_INIT(Elixir.Tokenizer.Nif, nif_funcs, NULL, NULL, NULL, NULL)
