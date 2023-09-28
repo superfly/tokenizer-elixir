@@ -1,0 +1,27 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    env:
+      MIX_ENV: test
+    name: Run tests
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Elixir
+      uses: erlef/setup-beam@v1
+      with:
+        elixir-version: '1.14.3'
+        otp-version: '25'
+    - run: sudo apt-get install -y libsodium-dev
+    - run: mix deps.get
+    - run: mix compile
+    - run: mix test
