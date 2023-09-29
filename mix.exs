@@ -23,7 +23,8 @@ defmodule Tokenizer.MixProject do
     [
       {:jason, "~> 1.4"},
       {:macfly, "~> 0.1.0", github: "superfly/macaroon-elixir"},
-      {:libsodium, "~> 2.0.0"}
+      {:libsodium, "~> 2.0.0"},
+      {:httpoison, "~> 2.1.0", only: [:test]}
     ]
   end
 end
