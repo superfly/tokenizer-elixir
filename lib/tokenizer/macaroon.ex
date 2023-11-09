@@ -1,7 +1,11 @@
 defmodule Tokenizer.Macaroon do
   @location "tokenizer"
 
-  def new(key, caveats \\ []), do: Macfly.new(key, key_fingerprint(key), @location, caveats)
+  def new(key, caveats \\ []) do
+    Macfly.Macaroon.new(key, key_fingerprint(key), @location, caveats)
+    |> then(&[&1])
+    |> Macfly.encode()
+  end
 
   def key_fingerprint(key) do
     <<prefix::binary-size(16), _rest::binary>> = :crypto.hash(:sha256, key)
@@ -11,65 +15,60 @@ defmodule Tokenizer.Macaroon do
   defmodule RequestMethod do
     defstruct [:allowed]
 
+    def new(allowed), do: %__MODULE__{allowed: allowed}
+
     defimpl Macfly.Caveat do
       def type(_), do: 0x1000000000000
       def body(v), do: v.allowed
+      def from_body(_, allowed, _), do: {:ok, %RequestMethod{allowed: allowed}}
     end
   end
-
-  def restrict_request_method(allowed), do: %RequestMethod{allowed: allowed}
-
-  def restrict_request_method(header, allowed),
-    do: Macfly.attenuate(@location, header, [%RequestMethod{allowed: allowed}])
 
   defmodule RequestPath do
     defstruct [:allowed]
 
+    def new(allowed), do: %__MODULE__{allowed: allowed}
+
     defimpl Macfly.Caveat do
       def type(_), do: 0x1000000000001
       def body(v), do: v.allowed
+      def from_body(_, allowed, _), do: {:ok, %RequestPath{allowed: allowed}}
     end
   end
-
-  def restrict_request_path(allowed), do: %RequestPath{allowed: allowed}
-
-  def restrict_request_path(header, allowed),
-    do: Macfly.attenuate(@location, header, [%RequestPath{allowed: allowed}])
 
   defmodule RequestPathPrefix do
     defstruct [:allowed]
 
+    def new(allowed), do: %__MODULE__{allowed: allowed}
+
     defimpl Macfly.Caveat do
       def type(_), do: 0x1000000000002
       def body(v), do: v.allowed
+      def from_body(_, allowed, _), do: {:ok, %RequestPathPrefix{allowed: allowed}}
     end
   end
-
-  def restrict_request_path_prefix(allowed), do: %RequestPathPrefix{allowed: allowed}
-
-  def restrict_request_path_prefix(header, allowed),
-    do: Macfly.attenuate(@location, header, [%RequestPathPrefix{allowed: allowed}])
 
   defmodule RequestPathPattern do
     defstruct [:allowed]
 
+    def new(allowed), do: %__MODULE__{allowed: allowed}
+
     defimpl Macfly.Caveat do
       def type(_), do: 0x1000000000003
       def body(v), do: v.allowed
+      def from_body(_, allowed, _), do: {:ok, %RequestPathPattern{allowed: allowed}}
     end
   end
 
   defmodule RequestHost do
     defstruct [:allowed]
 
+    def new(allowed), do: %__MODULE__{allowed: allowed}
+
     defimpl Macfly.Caveat do
       def type(_), do: 0x1000000000004
       def body(v), do: v.allowed
+      def from_body(_, allowed, _), do: {:ok, %RequestHost{allowed: allowed}}
     end
   end
-
-  def restrict_request_host(allowed), do: %RequestHost{allowed: allowed}
-
-  def restrict_request_host(header, allowed),
-    do: Macfly.attenuate(@location, header, [%RequestHost{allowed: allowed}])
 end

@@ -8,17 +8,30 @@ defmodule TokenizerTest do
     processor = %Tokenizer.InjectProcessor{token: "foo"}
     auth = %Tokenizer.MacaroonAuth{key: Base.encode64("mykey")}
     secret = Tokenizer.Secret.new(processor, auth)
-    seal_key = Base.decode16!(String.upcase("1ec9a2de9b34785519075504b350ece4aae53a9644b1cb6b4893d858b93c8e6c"))
+
+    seal_key =
+      Base.decode16!(
+        String.upcase("1ec9a2de9b34785519075504b350ece4aae53a9644b1cb6b4893d858b93c8e6c")
+      )
+
     {:ok, sealed} = Tokenizer.seal(secret, seal_key)
-    {:ok, hdr} = Tokenizer.Macaroon.new("mykey")
+    hdr = Tokenizer.Macaroon.new("mykey")
 
-    IO.puts hdr
+    headers = [
+      "Proxy-Tokenizer": sealed,
+      "Proxy-Authorization": hdr
+    ]
 
-    headers = [{"Proxy-Authorization", hdr}, {"Proxy-Tokenizer", sealed}]
-    options = [proxy: {"btoews-tokenizer.fly.dev", 80}]
+    options = [
+      proxy: {:connect, "btoews-tokenizer.fly.dev", 80},
+      # proxy_auth: {"", hdr},
+      timeout: 10000
+    ]
 
-    {:ok, %{status_code: 200}} = HTTPoison.get("http://httpbin.org/get", headers, options)
+    {:ok, %{status_code: 200, body: jsonBody}} =
+      HTTPoison.get("http://httpbin.org/get", headers, options)
 
+    {:ok, %{"headers" => %{"Authorization" => "Bearer foo"}}} = Jason.decode(jsonBody)
   end
 
   test "seal" do

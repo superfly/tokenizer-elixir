@@ -4,17 +4,19 @@ defmodule Tokenizer.MixProject do
   def project do
     [
       app: :tokenizer,
-      version: "0.1.0",
+      version: "0.2.0",
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+      package: package()
     ]
   end
 
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :crypto]
+      extra_applications:
+        if(Mix.env() == :test, do: [:logger, :crypto, :runtime_tools], else: [:logger, :crypto])
     ]
   end
 
@@ -22,9 +24,19 @@ defmodule Tokenizer.MixProject do
   defp deps do
     [
       {:jason, "~> 1.4"},
-      {:macfly, "~> 0.1.0", github: "superfly/macaroon-elixir"},
+      {:macfly, "~> 0.2.2"},
       {:libsodium, "~> 2.0.0"},
-      {:httpoison, "~> 2.1.0", only: [:test]}
+      {:httpoison, "~> 1.8"},
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
+    ]
+  end
+
+  defp package() do
+    [
+      name: "tokenizer",
+      description: "library for working the tokenizer proxy",
+      licenses: ["Apache-2.0"],
+      links: %{"GitHub" => "https://github.com/superfly/tokenizer-elixir"}
     ]
   end
 end
