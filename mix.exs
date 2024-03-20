@@ -25,8 +25,7 @@ defmodule Tokenizer.MixProject do
     [
       {:jason, "~> 1.4"},
       {:macfly, "~> 0.2.2"},
-      {:libsodium, "~> 2.0.0"},
-      {:httpoison, "~> 1.8"},
+      {:libsalty2, "~> 0.3.0"},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
   end

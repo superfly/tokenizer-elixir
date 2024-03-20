@@ -39,8 +39,10 @@ defmodule Tokenizer do
 
   @spec seal(%Tokenizer.Secret{}, iodata()) :: {:ok, String.t()}|{:error, any()}
   def seal(%Tokenizer.Secret{} = s, key) do
-    with {:ok, json} <- Jason.encode(s) do
-      {:ok, Base.encode64(:libsodium_crypto_box.seal(json, key))}
+    with {:ok, json} <- Jason.encode(s),
+          {:ok, sealed } <- Salty.Box.Curve25519xsalsa20poly1305.seal(json, key) do
+
+      {:ok, Base.encode64(sealed)}
     end
   end
 
