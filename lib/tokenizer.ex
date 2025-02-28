@@ -24,10 +24,15 @@ defmodule Tokenizer do
               inject_hmac_processor: nil,
               bearer_auth: nil,
               macaroon_auth: nil,
-              fly_src_auth: nil
+              fly_src_auth: nil,
+              allowed_hosts: nil,
+              allowed_host_pattern: nil
 
-    def new(processor, auth) do
-      %Secret{}
+    def new(processor, auth, opts \\ []) do
+      %Secret{
+        allowed_hosts: Keyword.get(opts, :allowed_hosts),
+        allowed_host_pattern: Keyword.get(opts, :allowed_host_pattern)
+      }
       |> merge_processor(processor)
       |> merge_auth(auth)
     end
