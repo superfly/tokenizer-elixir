@@ -24,7 +24,7 @@ defmodule Tokenizer.MixProject do
   defp deps do
     [
       {:req, "~> 0.6"},
-      {:macfly, path: "../macaroon-elixir"},
+      {:macfly, "~> 0.2"},
       libsalty2_dep(),
       {:ex_doc, "~> 0.38", only: :dev, runtime: false}
     ]
