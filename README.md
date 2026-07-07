@@ -1,6 +1,6 @@
 # Tokenizer
 
-**TODO: Add description**
+Elixir library for creating and sealing tokenizer proxy secrets and macaroon authorization headers.
 
 ## Installation
 
