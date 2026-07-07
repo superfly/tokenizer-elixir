@@ -13,14 +13,14 @@ jobs:
     env:
       MIX_ENV: test
     name: Run tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     - name: Set up Elixir
       uses: erlef/setup-beam@v1
       with:
-        elixir-version: '1.14.3'
-        otp-version: '25'
+        elixir-version: '1.20.2'
+        otp-version: '29'
     - run: sudo apt-get install -y libsodium-dev
     - run: mix deps.get
     - run: mix compile

@@ -50,19 +50,29 @@ defmodule Tokenizer do
 
   @spec seal(%Tokenizer.Secret{}, iodata()) :: {:ok, String.t()} | {:error, any()}
   def seal(%Tokenizer.Secret{} = s, key) do
-    with {:ok, json} <- Jason.encode(s) do
-      {:ok, Base.encode64(:libsodium_crypto_box.seal(json, key))}
+    with {:ok, json} <- Tokenizer.JSON.encode(s),
+         {:ok, sealed} <- Salty.Box.Curve25519xsalsa20poly1305.seal(json, key) do
+      {:ok, Base.encode64(sealed)}
     end
   end
 
-  defimpl Jason.Encoder,
+  defimpl JSON.Encoder,
     for: [InjectProcessor, InjectHMACProcessor, BearerAuth, MacaroonAuth, FlysrcAuth, Secret] do
-    def encode(struct, opts) do
+    def encode(struct, encoder) do
       struct
-      |> Map.from_struct()
-      |> Enum.filter(fn {_, v} -> v != nil end)
-      |> Enum.into(%{})
-      |> Jason.Encode.map(opts)
+      |> Tokenizer.JSON.to_map()
+      |> JSON.Encoder.Map.encode(encoder)
+    end
+  end
+
+  if Code.ensure_loaded?(Jason.Encoder) do
+    defimpl Jason.Encoder,
+      for: [InjectProcessor, InjectHMACProcessor, BearerAuth, MacaroonAuth, FlysrcAuth, Secret] do
+      def encode(struct, opts) do
+        struct
+        |> Tokenizer.JSON.to_map()
+        |> Jason.Encode.map(opts)
+      end
     end
   end
 end

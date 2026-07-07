@@ -4,6 +4,17 @@
 
 ## Installation
 
+Tokenizer uses libsodium via `libsalty2`, so install the system library before
+fetching and compiling dependencies:
+
+```sh
+# macOS
+brew install libsodium
+
+# Debian/Ubuntu
+sudo apt-get install -y libsodium-dev
+```
+
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 by adding `tokenizer` to your list of dependencies in `mix.exs`:
 
