@@ -5,7 +5,7 @@ defmodule Tokenizer.MixProject do
     [
       app: :tokenizer,
       version: "0.2.0",
-      elixir: "~> 1.14",
+      elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       package: package()
@@ -23,12 +23,28 @@ defmodule Tokenizer.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:jason, "~> 1.4"},
-      {:macfly, "~> 0.2.2"},
-      {:libsodium, "~> 2.0.0"},
-      {:httpoison, "~> 1.8"},
-      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
+      {:req, "~> 0.6"},
+      {:macfly, "~> 0.2"},
+      libsalty2_dep(),
+      {:ex_doc, "~> 0.38", only: :dev, runtime: false}
     ]
+  end
+
+  defp libsalty2_dep do
+    case :os.type() do
+      {:unix, :darwin} ->
+        {:libsalty2, "~> 0.3.0",
+         system_env: [
+           {"CROSSCOMPILE", "1"},
+           {"CFLAGS",
+            "-O2 -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -I/opt/homebrew/opt/libsodium/include"},
+           {"LDFLAGS",
+            "-L/opt/homebrew/opt/libsodium/lib -Wl,-rpath,/opt/homebrew/opt/libsodium/lib -undefined dynamic_lookup"}
+         ]}
+
+      _ ->
+        {:libsalty2, "~> 0.3.0"}
+    end
   end
 
   defp package() do

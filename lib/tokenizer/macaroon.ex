@@ -18,6 +18,7 @@ defmodule Tokenizer.Macaroon do
     def new(allowed), do: %__MODULE__{allowed: allowed}
 
     defimpl Macfly.Caveat do
+      def name(_), do: "RequestMethod"
       def type(_), do: 0x1000000000000
       def body(v), do: v.allowed
       def from_body(_, allowed, _), do: {:ok, %RequestMethod{allowed: allowed}}
@@ -30,6 +31,7 @@ defmodule Tokenizer.Macaroon do
     def new(allowed), do: %__MODULE__{allowed: allowed}
 
     defimpl Macfly.Caveat do
+      def name(_), do: "RequestPath"
       def type(_), do: 0x1000000000001
       def body(v), do: v.allowed
       def from_body(_, allowed, _), do: {:ok, %RequestPath{allowed: allowed}}
@@ -42,6 +44,7 @@ defmodule Tokenizer.Macaroon do
     def new(allowed), do: %__MODULE__{allowed: allowed}
 
     defimpl Macfly.Caveat do
+      def name(_), do: "RequestPathPrefix"
       def type(_), do: 0x1000000000002
       def body(v), do: v.allowed
       def from_body(_, allowed, _), do: {:ok, %RequestPathPrefix{allowed: allowed}}
@@ -54,6 +57,7 @@ defmodule Tokenizer.Macaroon do
     def new(allowed), do: %__MODULE__{allowed: allowed}
 
     defimpl Macfly.Caveat do
+      def name(_), do: "RequestPathPattern"
       def type(_), do: 0x1000000000003
       def body(v), do: v.allowed
       def from_body(_, allowed, _), do: {:ok, %RequestPathPattern{allowed: allowed}}
@@ -66,6 +70,7 @@ defmodule Tokenizer.Macaroon do
     def new(allowed), do: %__MODULE__{allowed: allowed}
 
     defimpl Macfly.Caveat do
+      def name(_), do: "RequestHost"
       def type(_), do: 0x1000000000004
       def body(v), do: v.allowed
       def from_body(_, allowed, _), do: {:ok, %RequestHost{allowed: allowed}}
