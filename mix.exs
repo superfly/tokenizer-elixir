@@ -1,14 +1,18 @@
 defmodule Tokenizer.MixProject do
   use Mix.Project
 
+  @source_url "https://github.com/superfly/tokenizer-elixir"
+  @version "0.3.0"
+
   def project do
     [
       app: :tokenizer,
-      version: "0.2.0",
+      version: @version,
       elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      package: package()
+      package: package(),
+      docs: docs()
     ]
   end
 
@@ -24,35 +28,28 @@ defmodule Tokenizer.MixProject do
   defp deps do
     [
       {:req, "~> 0.6"},
-      {:macfly, "~> 0.2"},
-      libsalty2_dep(),
+      {:macfly, "~> 0.2.21"},
+      {:libsalty2, "~> 0.3.0"},
       {:ex_doc, "~> 0.38", only: :dev, runtime: false}
     ]
-  end
-
-  defp libsalty2_dep do
-    case :os.type() do
-      {:unix, :darwin} ->
-        {:libsalty2, "~> 0.3.0",
-         system_env: [
-           {"CROSSCOMPILE", "1"},
-           {"CFLAGS",
-            "-O2 -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -I/opt/homebrew/opt/libsodium/include"},
-           {"LDFLAGS",
-            "-L/opt/homebrew/opt/libsodium/lib -Wl,-rpath,/opt/homebrew/opt/libsodium/lib -undefined dynamic_lookup"}
-         ]}
-
-      _ ->
-        {:libsalty2, "~> 0.3.0"}
-    end
   end
 
   defp package() do
     [
       name: "tokenizer",
-      description: "library for working the tokenizer proxy",
+      description: "Elixir library for creating and sealing tokenizer proxy secrets",
+      files: ["lib", "mix.exs", "README.md", "CHANGELOG.md", "LICENSE"],
       licenses: ["Apache-2.0"],
-      links: %{"GitHub" => "https://github.com/superfly/tokenizer-elixir"}
+      links: %{"GitHub" => @source_url}
+    ]
+  end
+
+  defp docs do
+    [
+      main: "readme",
+      extras: ["README.md", "CHANGELOG.md"],
+      source_ref: "v#{@version}",
+      source_url: @source_url
     ]
   end
 end

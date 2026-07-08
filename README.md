@@ -15,18 +15,25 @@ brew install libsodium
 sudo apt-get install -y libsodium-dev
 ```
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `tokenizer` to your list of dependencies in `mix.exs`:
+On Apple Silicon, `libsalty2` may need explicit Homebrew paths when compiling
+its NIF:
+
+```sh
+CROSSCOMPILE=1 \
+CFLAGS="-O2 -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -I/opt/homebrew/opt/libsodium/include" \
+LDFLAGS="-L/opt/homebrew/opt/libsodium/lib -Wl,-rpath,/opt/homebrew/opt/libsodium/lib -undefined dynamic_lookup" \
+mix deps.compile libsalty2 --force
+```
+
+Add `tokenizer` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
   [
-    {:tokenizer, "~> 0.1.0"}
+    {:tokenizer, "~> 0.3.0"}
   ]
 end
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/tokenizer>.
+Documentation is available at <https://hexdocs.pm/tokenizer>.
 
